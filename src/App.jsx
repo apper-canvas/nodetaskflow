@@ -212,4 +212,3 @@ const SunIcon = getIcon('Sun');
 const MoonIcon = getIcon('Moon');
 
 export default App;
-export default App;
