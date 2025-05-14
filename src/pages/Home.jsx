@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import getIcon from '../utils/iconUtils';
 import MainFeature from '../components/MainFeature';
+import Clock from '../components/Clock';
 
 // Icon definitions
 const CheckCheckIcon = getIcon('CheckCheck');
@@ -60,6 +61,7 @@ const Home = () => {
           <div className="flex items-center space-x-2">
             <LayersIcon className="w-6 h-6" />
             <h1 className="text-xl md:text-2xl font-bold">TaskFlow</h1>
+            <Clock />
           </div>
         </div>
       </header>
