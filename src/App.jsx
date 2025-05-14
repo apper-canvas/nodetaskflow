@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useCallback } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,7 +18,11 @@ import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Create auth context
+import axios from 'axios';
+
 export const AuthContext = createContext(null);
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 function App() {
   const navigate = useNavigate();
@@ -37,7 +41,27 @@ function App() {
     }
     return false;
   });
-  
+
+  // Handle authentication errors with axios
+  const handleAuthError = useCallback((error) => {
+    console.error("Authentication failed:", error);
+    const errorMessage = error.response?.data?.message || error.message || 'Authentication failed';
+    navigate('/error?message=' + encodeURIComponent(errorMessage));
+  }, [navigate]);
+
+  // Initialize axios default settings for authentication
+  useEffect(() => {
+    // Set default base URL
+    if (API_BASE_URL) {
+      axios.defaults.baseURL = API_BASE_URL;
+    }
+    
+    // Configure default headers and timeout
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
+    axios.defaults.timeout = 15000;
+    
+  }, []);
+
   // Initialize ApperUI once when the app loads
   useEffect(() => {
     const { ApperClient, ApperUI } = window.ApperSDK;
@@ -102,9 +126,9 @@ function App() {
 			dispatch(clearUser());
 		}
       },
-      onError: function(error) {
-        console.error("Authentication failed:", error);
-        navigate('/error?message=' + encodeURIComponent(error.message || 'Authentication failed'));
+      onError: function(err) {
+        // Use the axios error handler
+        handleAuthError(err);
       }
     });
     
